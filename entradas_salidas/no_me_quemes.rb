@@ -1,7 +1,7 @@
 require 'net/imap'
 
 username = 'felix.cuello@gmail.com'
-app_password = 'tial bpdp igfz exje'
+app_password = 'dwzd qdps vwaw unpx'
 
 imap = Net::IMAP.new('imap.googlemail.com', ssl: true)
 imap.port          => 993
@@ -12,8 +12,8 @@ imap.login(username, app_password)
 imap.select('cardales')
 
 # Define the date range
-start_date = Date.new(2024, 1, 10)
-end_date = Date.new(2024, 1, 11)
+start_date = Date.new(2024, 1, 31)
+end_date = Date.new(2024, 2, 1)
 
 ingreso_emails = imap.search(['SUBJECT', 'de Ingreso', 'SINCE', start_date.strftime('%d-%b-%Y'), 'BEFORE', end_date.strftime('%d-%b-%Y')])
 egreso_emails = imap.search(['SUBJECT', 'de Egreso', 'SINCE', start_date.strftime('%d-%b-%Y'), 'BEFORE', end_date.strftime('%d-%b-%Y')])
