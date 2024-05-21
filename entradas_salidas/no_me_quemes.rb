@@ -12,8 +12,14 @@ imap.login(username, app_password)
 imap.select('cardales')
 
 # Define the date range
-start_date = Date.new(2024, 1, 31)
-end_date = Date.new(2024, 2, 1)
+start_date = ARGV[0] || Date.today.strftime('%Y-%m-%d')
+end_date = ARGV[1] || (Date.today + 1).strftime('%Y-%m-%d')
+
+start_y, start_m, start_d = start_date.split('-').map(&:to_i)
+end_y, end_m, end_d = end_date.split('-').map(&:to_i)
+
+start_date = Date.new(start_y, start_m, start_d)
+end_date = Date.new(end_y, end_m, end_d)
 
 ingreso_emails = imap.search(['SUBJECT', 'de Ingreso', 'SINCE', start_date.strftime('%d-%b-%Y'), 'BEFORE', end_date.strftime('%d-%b-%Y')])
 egreso_emails = imap.search(['SUBJECT', 'de Egreso', 'SINCE', start_date.strftime('%d-%b-%Y'), 'BEFORE', end_date.strftime('%d-%b-%Y')])
