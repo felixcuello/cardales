@@ -1,0 +1,4 @@
+ipdb == 0.13.9              # For Python debugging
+pdfminer.six == 20231228    # PDF miner
+pillow == 10.3.0            # For image processing
+pytesseract == 0.3.10       # For OCR
