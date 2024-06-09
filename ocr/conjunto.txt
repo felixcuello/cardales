@@ -1,8 +1,0 @@
-Traceback (most recent call last):
-  File "/app/convert.py", line 21, in <module>
-    ocr_files.append(ocr_to_text(file_path, output_path))
-  File "/app/convert.py", line 6, in ocr_to_text
-    img = Image.open(file_path)
-  File "/usr/local/lib/python3.9/site-packages/PIL/Image.py", line 3339, in open
-    raise UnidentifiedImageError(msg)
-PIL.UnidentifiedImageError: cannot identify image file '/app/cardales/enero_2024_1.pdf'
