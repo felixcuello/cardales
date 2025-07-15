@@ -47,18 +47,16 @@ all_emails.each do |email_id|
   hash_ingresos_egresos[fecha] ||= {}
   hash_ingresos_egresos[fecha][nombre] ||= {}
   hash_ingresos_egresos[fecha][nombre][estado] ||= hora
-  print '.'
 end
-
-puts ''
 
 puts 'fecha,hora de ingreso,hora de egreso,nombre'
 hash_ingresos_egresos.keys.each do |fecha|
+  next if fecha == '--'
   hash_ingresos_egresos[fecha].keys.each do |nombre|
-    puts "#{fecha}," \
-      "#{hash_ingresos_egresos[fecha][nombre]['ingresado']}," \
-      "#{hash_ingresos_egresos[fecha][nombre]['egresado']}," \
-      "#{nombre}"
+    puts "\"#{fecha}\"," \
+      "\"#{hash_ingresos_egresos[fecha][nombre]['ingresado']}\"," \
+      "\"#{hash_ingresos_egresos[fecha][nombre]['egresado']}\"," \
+      "\"#{nombre}\""
   end
 end
 
