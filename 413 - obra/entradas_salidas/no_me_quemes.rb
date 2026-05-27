@@ -1,4 +1,5 @@
 require 'net/imap'
+require 'date'
 
 username = 'felix.cuello@gmail.com'
 app_password = 'dwzd qdps vwaw unpx'
@@ -49,14 +50,40 @@ all_emails.each do |email_id|
   hash_ingresos_egresos[fecha][nombre][estado] ||= hora
 end
 
-puts 'fecha,hora de ingreso,hora de egreso,nombre'
+puts "debug #{__LINE__}"
+
+day_count = {}
+hash_ingresos_egresos.each do |fecha, personas|
+  next if fecha == '--'
+  date = Date.parse(fecha)
+  week_key = "#{date.cwyear}-#{date.cweek}"
+  
+  personas.each_key do |nombre|
+    day_count[nombre] ||= {}
+    day_count[nombre][week_key] ||= []
+    day_count[nombre][week_key] << fecha
+  end
+end
+
+day_number = {}
+day_count.each do |nombre, weeks|
+  day_number[nombre] ||= {}
+  weeks.each do |_week, fechas|
+    fechas.sort.each_with_index do |fecha, idx|
+      day_number[nombre][fecha] = idx + 1
+    end
+  end
+end
+
+puts 'fecha,hora de ingreso,hora de egreso,nombre,dia_semana'
 hash_ingresos_egresos.keys.each do |fecha|
   next if fecha == '--'
   hash_ingresos_egresos[fecha].keys.each do |nombre|
     puts "\"#{fecha}\"," \
       "\"#{hash_ingresos_egresos[fecha][nombre]['ingresado']}\"," \
       "\"#{hash_ingresos_egresos[fecha][nombre]['egresado']}\"," \
-      "\"#{nombre}\""
+      "\"#{nombre}\"," \
+      "\"#{day_number[nombre][fecha]}\""
   end
 end
 
