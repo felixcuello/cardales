@@ -1,0 +1,20 @@
+PRESUPUESTO ORIGINAL               : 10,296,000
+TOTAL ABERTURAS MODIFICADAS        : 10.475.715 (100%)
+
+==========================================================
+Pago 1                             :  6.160.000
+Pago 2                             :  1.180.000
+TOTAL PAGADO                       :  7.340.000   (70%)
+
+==========================================================
+FALTA PAGAR                        :  3.135.715
++ diferencia paño fijo escalera    :     50.000
++ diferencia puerta modena         :     15.000
+
+TOTAL A PAGAR CONTRA ENTREGA       :  3.200.715  <<<<<<
+
+
+
+
+
+
