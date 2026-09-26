@@ -12,6 +12,12 @@ imap.login(username, app_password)
 
 imap.select('cardales')
 
+group_by_regex = nil
+if (idx = ARGV.index('--group-by'))
+  group_by_regex = Regexp.new(ARGV[idx + 1], Regexp::IGNORECASE)
+  ARGV.slice!(idx, 2)
+end
+
 # Define the date range
 start_date = ARGV[0] || Date.today.strftime('%Y-%m-%d')
 end_date = ARGV[1] || (Date.today + 1).strftime('%Y-%m-%d')
@@ -27,7 +33,18 @@ egreso_emails = imap.search(['SUBJECT', 'de Egreso', 'SINCE', start_date.strftim
 all_emails = (ingreso_emails + egreso_emails).uniq
 
 hash_ingresos_egresos = {}
-all_emails.each do |email_id|
+total_emails = all_emails.size
+progress_width = 30
+
+all_emails.each_with_index do |email_id, idx|
+  if total_emails.positive?
+    processed = idx + 1
+    completed_width = ((processed.to_f / total_emails) * progress_width).round
+    remaining_width = progress_width - completed_width
+    bar = ('=' * completed_width) + (' ' * remaining_width)
+    $stderr.print "\rProcesando emails [#{bar}] #{processed}/#{total_emails}"
+  end
+
   envelope = imap.fetch(email_id, 'ENVELOPE')[0].attr['ENVELOPE']
 
   # Fetch and display the email body if a suitable part is found
@@ -43,12 +60,17 @@ all_emails.each do |email_id|
   nombre = nombre.to_s.strip&.gsub(/=/, '')
   estado = estado.to_s.strip&.gsub(/=/, '')
 
-  fecha = "#{ano}-#{mes}-#{dia}"
+  fecha = if ano.empty? || mes.empty? || dia.empty?
+            '--'
+          else
+            format('%04d-%02d-%02d', ano.to_i, mes.to_i, dia.to_i)
+          end
 
   hash_ingresos_egresos[fecha] ||= {}
   hash_ingresos_egresos[fecha][nombre] ||= {}
   hash_ingresos_egresos[fecha][nombre][estado] ||= hora
 end
+$stderr.puts if total_emails.positive?
 
 puts "debug #{__LINE__}"
 
@@ -75,15 +97,36 @@ day_count.each do |nombre, weeks|
   end
 end
 
-puts 'fecha,hora de ingreso,hora de egreso,nombre,dia_semana'
-hash_ingresos_egresos.keys.each do |fecha|
-  next if fecha == '--'
-  hash_ingresos_egresos[fecha].keys.each do |nombre|
-    puts "\"#{fecha}\"," \
-      "\"#{hash_ingresos_egresos[fecha][nombre]['ingresado']}\"," \
-      "\"#{hash_ingresos_egresos[fecha][nombre]['egresado']}\"," \
-      "\"#{nombre}\"," \
-      "\"#{day_number[nombre][fecha]}\""
+if group_by_regex
+  week_totals = {}
+  hash_ingresos_egresos.each do |fecha, personas|
+    next if fecha == '--'
+    date = Date.parse(fecha)
+    week_key = [date.cwyear, date.cweek]
+    personas.each_key do |nombre|
+      next unless nombre.match?(group_by_regex)
+      week_totals[week_key] ||= 0
+      week_totals[week_key] += 1
+    end
+  end
+
+  puts 'lunes,viernes,dias'
+  week_totals.keys.sort.each do |year, week_num|
+    monday = Date.commercial(year, week_num, 1)
+    friday = Date.commercial(year, week_num, 5)
+    puts "#{monday},#{friday},#{week_totals[[year, week_num]]}"
+  end
+else
+  puts 'fecha,hora de ingreso,hora de egreso,nombre,dia_semana'
+  hash_ingresos_egresos.keys.each do |fecha|
+    next if fecha == '--'
+    hash_ingresos_egresos[fecha].keys.each do |nombre|
+      puts "\"#{fecha}\"," \
+        "\"#{hash_ingresos_egresos[fecha][nombre]['ingresado']}\"," \
+        "\"#{hash_ingresos_egresos[fecha][nombre]['egresado']}\"," \
+        "\"#{nombre}\"," \
+        "\"#{day_number[nombre][fecha]}\""
+    end
   end
 end
 
