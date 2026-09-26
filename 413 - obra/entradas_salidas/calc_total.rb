@@ -4,11 +4,12 @@ require 'csv'
 # create a script tha treads the CSV and outputs all the days of the year from 2023-11-01 to 2025-11-30 with the total
 # hours worked each day
 
-def parse_csv(file_path)
+def parse_csv(file_path, name_filter = nil)
   total_hours = Hash.new(0)
 
   CSV.foreach(file_path, headers: true) do |row|
     next if /obrero/i.match?(row['tipo'])
+    next if name_filter && !name_filter.match?(row['nombre'].to_s)
 
     date = Date.parse(row['fecha'])
     hour_in = row['ingreso'].to_f
@@ -38,7 +39,12 @@ def main
   start_date = Date.new(2023, 11, 1)
   end_date = Date.new(2025, 11, 30)
 
-  total_hours = parse_csv(file_path)
+  name_filter = nil
+  if (idx = ARGV.index('--filter'))
+    name_filter = Regexp.new(ARGV[idx + 1], Regexp::IGNORECASE)
+  end
+
+  total_hours = parse_csv(file_path, name_filter)
   report = generate_report(total_hours, start_date, end_date)
 
   puts 'Date, Total Hours Worked'

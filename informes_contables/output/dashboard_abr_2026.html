@@ -1,0 +1,1157 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financiero - Abril 2026</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f6fa;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header .period {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .card-label {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .card.positive .card-value {
+            color: #27ae60;
+        }
+        
+        .card.negative .card-value {
+            color: #e74c3c;
+        }
+        
+        .card.warning {
+            border-left: 4px solid #f39c12;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        .section h2 {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 0.5rem;
+        }
+        
+        .tab {
+            padding: 0.5rem 1rem;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 6px 6px 0 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .data-table th {
+            background: #3498db;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-table td {
+            padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .data-table .number {
+            text-align: right;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        
+        .data-table .total {
+            font-weight: 700;
+            color: #e74c3c;
+        }
+        
+        .deposits-summary {
+            background: #fff3cd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            color: #856404;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .summary-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dashboard Financiero - Club Cardales</h1>
+        <div class="period">Abril 2026</div>
+    </div>
+    
+    <div class="container">
+        
+    <div class="summary-cards">
+        <div class="card">
+            <div class="card-label">Saldo Inicial (01/04)</div>
+            <div class="card-value">$154.06M</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Saldo Final (30/04)</div>
+            <div class="card-value">$160.86M</div>
+        </div>
+        <div class="card positive">
+            <div class="card-label">Superávit/Déficit</div>
+            <div class="card-value">+$6.80M</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Cobranza Total</div>
+            <div class="card-value">$1,011.65M</div>
+        </div>
+        <div class="card">
+            <div class="card-label">Erogaciones</div>
+            <div class="card-value">$1,019.50M</div>
+        </div>
+        <div class="card warning">
+            <div class="card-label">Deuda Total</div>
+            <div class="card-value">$80.06M</div>
+        </div>
+        <div class="card warning">
+            <div class="card-label">Depósitos No Identificados</div>
+            <div class="card-value">$8.23M</div>
+        </div>
+    </div>
+    
+        
+        <div class="section">
+            <h2>Flujo de Caja - Cobranza por Canal</h2>
+            <div style="height:400px; width:100%;">                            <div id="9c8f340f-0b30-4128-997d-4bf5964d0ad6" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("9c8f340f-0b30-4128-997d-4bf5964d0ad6")) {                    Plotly.newPlot(                        "9c8f340f-0b30-4128-997d-4bf5964d0ad6",                        [{"marker":{"color":"#3498db"},"orientation":"h","text":["$392.76M","$276.85M","$136.50M","$59.91M","$51.76M","$50.08M","$15.43M","$10.80M","$10.38M","$9.60M","$7.33M","$6.72M","$4.02M","$2.55M","$2.53M","$2.10M","$1.58M","$1.36M","$1.26M","$812.9K","$104.9K"],"textposition":"outside","x":[392755340.94000006,276854262.34999996,136501267.82,59906007.04000001,51755953.19,50077465.52,15426342.61,10798753.55,10378339.0,9595237.27,7328605.57583664,6719913.670000001,4020958.0,2552431.0,2525538.0,2101936.0,1584605.2586371568,1360042.0,1260000.0,812883.9999999999,104896.0],"y":["Transf de Socios","Servicios Pagos Visa","Servicio Pago Mis Cuentas","Depositos en Bancos en Efectivo","Servicios Pagos Mastercard","Debito Directo","Pago Facil","Servicios Pagos Amex","Mantenimiento General","Otros medios de cobro","Dep. Tecnico","E-Cheq","Mantenimiento Tenis","Deportes","Seguridad","Mantenimiento H\u00edpico","Mantenimiento Futbol","Mantenimiento Golf","Deposito de Cheques","Actividades Sociales, Institucionales y  de Comunicaci\u00f3n","Administracion"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":200,"r":100,"t":50,"b":50},"xaxis":{"title":{"text":"Monto ($)"},"tickformat":",.0f"},"title":{"text":"Cobranza por Canal de Pago"},"yaxis":{"title":{"text":""}},"height":400},                        {"responsive": true}                    )                };            </script>        </div>
+        </div>
+        
+        <div class="section">
+            <h2>Deudores</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('debtors', 'chart')">Gráfico Top 10</button>
+                <button class="tab" onclick="showTab('debtors', 'aging')">Antigüedad</button>
+                <button class="tab" onclick="showTab('debtors', 'table')">Tabla Completa</button>
+            </div>
+            <div id="debtors-chart" class="tab-content active">
+                <div style="height:400px; width:100%;">                            <div id="0dd5fda8-7df1-4a2f-a6b6-de3f6ad5ac1e" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("0dd5fda8-7df1-4a2f-a6b6-de3f6ad5ac1e")) {                    Plotly.newPlot(                        "0dd5fda8-7df1-4a2f-a6b6-de3f6ad5ac1e",                        [{"marker":{"color":"#e74c3c"},"orientation":"h","text":["$11.51M","$10.31M","$7.40M","$5.45M","$5.20M","$4.67M","$3.83M","$3.60M","$3.41M","$2.89M"],"textposition":"outside","x":[11506099.809999999,10313773.139999999,7400858.21,5445396.15,5203584.029999999,4673829.52,3832810.95,3599820.8299999996,3411520.45,2889813.9699999997],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":250,"r":100,"t":50,"b":50},"xaxis":{"title":{"text":"Deuda Total ($)"},"tickformat":",.0f"},"title":{"text":"Top 10 Deudores"},"yaxis":{"title":{"text":""}},"height":400},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+            <div id="debtors-aging" class="tab-content">
+                <div style="height:450px; width:100%;">                            <div id="52444498-de3a-4f59-85b4-985f836c90ae" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("52444498-de3a-4f59-85b4-985f836c90ae")) {                    Plotly.newPlot(                        "52444498-de3a-4f59-85b4-985f836c90ae",                        [{"marker":{"color":"#3498db"},"name":"Abril 26","orientation":"h","x":[1366897.28,1877532.06,1785673.75,3881639.5,1024594.89,2004734.91,1392058.18,956642.82,1912566.02,1684834.88],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#2ecc71"},"name":"Marzo 26","orientation":"h","x":[1173741.01,1721133.99,1635729.8,1563756.65,978375.09,1825365.15,1433616.34,870268.99,1498954.43,605851.33],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#f1c40f"},"name":"Febrero 26","orientation":"h","x":[1125689.39,1690113.56,1585035.03,0.0,957955.17,843729.46,1007136.43,892117.95,0.0,0.0],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#e67e22"},"name":"Enero 26","orientation":"h","x":[2027320.01,1682337.76,1501025.46,0.0,851175.19,0.0,0.0,880791.07,0.0,0.0],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#e74c3c"},"name":"Diciembre 25","orientation":"h","x":[843427.29,1545494.51,893394.17,0.0,723022.43,0.0,0.0,0.0,0.0,599127.76],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#9b59b6"},"name":"Noviembre 25","orientation":"h","x":[1418416.76,1452387.08,0.0,0.0,668461.26,0.0,0.0,0.0,0.0,0.0],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#1abc9c"},"name":"Octubre 25","orientation":"h","x":[1355534.99,344774.18,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"},{"marker":{"color":"#95a5a6"},"name":"Per\u00edodos Anteriores","orientation":"h","x":[2195073.08,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],"y":["BERARDI Jorge(SUCESION)","DESCHERES Marta Monica Martinez","KOLKER Miguel","FORMAGGIO Silvina Andrea","QUEVEDO Romina Lorena","ALIBERTI Mar\u00eda Camila","LANZA Maximiliano Martin","CUPELLI Jose Maria ( SUCESION )","THULUNK S.A","LIMONGELLI Eduardo"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":250,"r":50,"t":50,"b":50},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"right","x":1},"title":{"text":"Antig\u00fcedad de Deuda - Top 10 Deudores"},"barmode":"stack","xaxis":{"title":{"text":"Monto ($)"}},"yaxis":{"title":{"text":""}},"height":450},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+            <div id="debtors-table" class="tab-content">
+                
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Socio</th>
+                    <th>Nombre</th>
+                    <th>UF</th>
+                    <th>Abril 26</th>
+                    <th>Marzo 26</th>
+                    <th>Febrero 26</th>
+                    <th>Total Deuda</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr>
+            <td>01931-00</td>
+            <td>BERARDI Jorge(SUCESION)</td>
+            <td>536</td>
+            <td class="number">$1.37M</td>
+            <td class="number">$1.17M</td>
+            <td class="number">$1.13M</td>
+            <td class="number total">$11.51M</td>
+        </tr>
+        
+        <tr>
+            <td>00808-00</td>
+            <td>DESCHERES Marta Monica Martinez</td>
+            <td>442 443</td>
+            <td class="number">$1.88M</td>
+            <td class="number">$1.72M</td>
+            <td class="number">$1.69M</td>
+            <td class="number total">$10.31M</td>
+        </tr>
+        
+        <tr>
+            <td>00513-00</td>
+            <td>KOLKER Miguel</td>
+            <td>272 273</td>
+            <td class="number">$1.79M</td>
+            <td class="number">$1.64M</td>
+            <td class="number">$1.59M</td>
+            <td class="number total">$7.40M</td>
+        </tr>
+        
+        <tr>
+            <td>01478-00</td>
+            <td>FORMAGGIO Silvina Andrea</td>
+            <td>284 285 286</td>
+            <td class="number">$3.88M</td>
+            <td class="number">$1.56M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$5.45M</td>
+        </tr>
+        
+        <tr>
+            <td>01876-00</td>
+            <td>QUEVEDO Romina Lorena</td>
+            <td>905</td>
+            <td class="number">$1.02M</td>
+            <td class="number">$978.4K</td>
+            <td class="number">$958.0K</td>
+            <td class="number total">$5.20M</td>
+        </tr>
+        
+        <tr>
+            <td>01902-00</td>
+            <td>ALIBERTI María Camila</td>
+            <td>266 598</td>
+            <td class="number">$2.00M</td>
+            <td class="number">$1.83M</td>
+            <td class="number">$843.7K</td>
+            <td class="number total">$4.67M</td>
+        </tr>
+        
+        <tr>
+            <td>00154-00</td>
+            <td>LANZA Maximiliano Martin</td>
+            <td>600</td>
+            <td class="number">$1.39M</td>
+            <td class="number">$1.43M</td>
+            <td class="number">$1.01M</td>
+            <td class="number total">$3.83M</td>
+        </tr>
+        
+        <tr>
+            <td>00205-00</td>
+            <td>CUPELLI Jose Maria ( SUCESION )</td>
+            <td>517</td>
+            <td class="number">$956.6K</td>
+            <td class="number">$870.3K</td>
+            <td class="number">$892.1K</td>
+            <td class="number total">$3.60M</td>
+        </tr>
+        
+        <tr>
+            <td>01309-00</td>
+            <td>THULUNK S.A</td>
+            <td>856 857</td>
+            <td class="number">$1.91M</td>
+            <td class="number">$1.50M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$3.41M</td>
+        </tr>
+        
+        <tr>
+            <td>01862-00</td>
+            <td>LIMONGELLI Eduardo</td>
+            <td>767 768</td>
+            <td class="number">$1.68M</td>
+            <td class="number">$605.9K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$2.89M</td>
+        </tr>
+        
+        <tr>
+            <td>01818-00</td>
+            <td>VELOSO Nicolás Ricardo</td>
+            <td>1133</td>
+            <td class="number">$862.9K</td>
+            <td class="number">$812.7K</td>
+            <td class="number">$841.2K</td>
+            <td class="number total">$2.52M</td>
+        </tr>
+        
+        <tr>
+            <td>02005-00</td>
+            <td>NINO Ariel Fabián</td>
+            <td>870 871</td>
+            <td class="number">$0.00</td>
+            <td class="number">$1.24M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$2.42M</td>
+        </tr>
+        
+        <tr>
+            <td>00974-00</td>
+            <td>DARMUN Sandra Noemi</td>
+            <td>147</td>
+            <td class="number">$940.4K</td>
+            <td class="number">$854.4K</td>
+            <td class="number">$365.0K</td>
+            <td class="number total">$2.16M</td>
+        </tr>
+        
+        <tr>
+            <td>01843-00</td>
+            <td>FUENTES Andrea Elisa</td>
+            <td>958</td>
+            <td class="number">$1.18M</td>
+            <td class="number">$937.4K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$2.12M</td>
+        </tr>
+        
+        <tr>
+            <td>01056-00</td>
+            <td>FERNANDEZ Juan Manuel</td>
+            <td>712</td>
+            <td class="number">$1.72M</td>
+            <td class="number">$323.6K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$2.04M</td>
+        </tr>
+        
+        <tr>
+            <td>01861-00</td>
+            <td>VAZQUEZ Matías Sol</td>
+            <td>10</td>
+            <td class="number">$849.2K</td>
+            <td class="number">$581.6K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$1.43M</td>
+        </tr>
+        
+        <tr>
+            <td>00768-00</td>
+            <td>BOMARO S.A. BORQUE Alejandro</td>
+            <td>872</td>
+            <td class="number">$1.08M</td>
+            <td class="number">$238.3K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$1.32M</td>
+        </tr>
+        
+        <tr>
+            <td>01957-00</td>
+            <td>ROUZES Manuel</td>
+            <td>373</td>
+            <td class="number">$1.10M</td>
+            <td class="number">$208.1K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$1.31M</td>
+        </tr>
+        
+        <tr>
+            <td>01578-00</td>
+            <td>GAZZOLO Jose María</td>
+            <td>840 841</td>
+            <td class="number">$1.13M</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$1.13M</td>
+        </tr>
+        
+        <tr>
+            <td>01734-00</td>
+            <td>RODRIGUEZ Jorge Oscar</td>
+            <td>577</td>
+            <td class="number">$893.3K</td>
+            <td class="number">$160.1K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$1.05M</td>
+        </tr>
+        
+        <tr>
+            <td>01296-00</td>
+            <td>GONZALEZ Rubén Oscar</td>
+            <td>826</td>
+            <td class="number">$1.01M</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$1.01M</td>
+        </tr>
+        
+        <tr>
+            <td>01334-00</td>
+            <td>BERTOLDI María Sofía</td>
+            <td>721 722</td>
+            <td class="number">$969.4K</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$969.4K</td>
+        </tr>
+        
+        <tr>
+            <td>01879-00</td>
+            <td>CANO Laura Valeria</td>
+            <td>859</td>
+            <td class="number">$908.7K</td>
+            <td class="number">$32.7K</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$941.4K</td>
+        </tr>
+        
+        <tr>
+            <td>01901-00</td>
+            <td>BUR Felix Ricardo</td>
+            <td>1128</td>
+            <td class="number">$633.0K</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$633.0K</td>
+        </tr>
+        
+        <tr>
+            <td>01222-00</td>
+            <td>BEINES Alejandra</td>
+            <td>617 619</td>
+            <td class="number">$351.9K</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$351.9K</td>
+        </tr>
+        
+        <tr>
+            <td>01656-00</td>
+            <td>ALVAREZ Fernanda</td>
+            <td>629 690</td>
+            <td class="number">$267.3K</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$267.3K</td>
+        </tr>
+        
+        <tr>
+            <td>01667-00</td>
+            <td>REYES Rodrigo Angel</td>
+            <td>1015</td>
+            <td class="number">$104.2K</td>
+            <td class="number">$0.00</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$104.2K</td>
+        </tr>
+        
+        <tr>
+            <td>00919-00</td>
+            <td>COCUZZA Salvador</td>
+            <td>339 340</td>
+            <td class="number">$0.00</td>
+            <td class="number">$38.70M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>76000-00</td>
+            <td>BRAVO Silvia Gisela</td>
+            <td></td>
+            <td class="number">$0.00</td>
+            <td class="number">$3.47M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00721-00</td>
+            <td>ZYGIER Boris</td>
+            <td>172</td>
+            <td class="number">$0.00</td>
+            <td class="number">$11.21M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00991-00</td>
+            <td>DONNINI Fabián Sebastián</td>
+            <td>378</td>
+            <td class="number">$0.00</td>
+            <td class="number">$14.48M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00029-00</td>
+            <td>CHEILER SA</td>
+            <td>621</td>
+            <td class="number">$0.00</td>
+            <td class="number">$14.40M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01223-00</td>
+            <td>HORGAN Fernando</td>
+            <td>1122</td>
+            <td class="number">$0.00</td>
+            <td class="number">$16.78M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00141-00</td>
+            <td>CONFORTI Ricardo (SUCESION)</td>
+            <td>735</td>
+            <td class="number">$0.00</td>
+            <td class="number">$17.77M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01417-00</td>
+            <td>IACARUSO Domingo Raul</td>
+            <td>425</td>
+            <td class="number">$0.00</td>
+            <td class="number">$17.70M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00140-00</td>
+            <td>CHEILER S.A</td>
+            <td>630</td>
+            <td class="number">$0.00</td>
+            <td class="number">$18.26M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00866-00</td>
+            <td>FARESI Renso ( UF SUBASTADA )</td>
+            <td>1078</td>
+            <td class="number">$0.00</td>
+            <td class="number">$18.87M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00457-00</td>
+            <td>CHEILER SA</td>
+            <td>667 668</td>
+            <td class="number">$0.00</td>
+            <td class="number">$19.28M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01546-00</td>
+            <td>RECUPERO Cecilia Jahel</td>
+            <td>1132</td>
+            <td class="number">$0.00</td>
+            <td class="number">$20.60M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01726-00</td>
+            <td>DALPONTE Gustavo Rubén</td>
+            <td>567</td>
+            <td class="number">$0.00</td>
+            <td class="number">$20.87M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00783-00</td>
+            <td>DEL VISO Miguel Angel</td>
+            <td>381</td>
+            <td class="number">$0.00</td>
+            <td class="number">$20.40M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01607-00</td>
+            <td>CHEILER S.A</td>
+            <td>686</td>
+            <td class="number">$0.00</td>
+            <td class="number">$20.78M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01562-00</td>
+            <td>TORO Beatriz Maria</td>
+            <td>492</td>
+            <td class="number">$0.00</td>
+            <td class="number">$21.96M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01203-00</td>
+            <td>DI NUZZO Mario Héctor</td>
+            <td>1073</td>
+            <td class="number">$0.00</td>
+            <td class="number">$24.73M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01780-00</td>
+            <td>CASSARA Vanina Mariana</td>
+            <td>453</td>
+            <td class="number">$0.00</td>
+            <td class="number">$25.48M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01903-00</td>
+            <td>GONZALEZ Cynthia Geraldina</td>
+            <td>1135</td>
+            <td class="number">$0.00</td>
+            <td class="number">$31.46M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01255-00</td>
+            <td>GUADAMAR SA AMODIO Marcelo Daniel</td>
+            <td>72 73</td>
+            <td class="number">$0.00</td>
+            <td class="number">$29.84M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>01378-00</td>
+            <td>PETLIUK Leonardo Samuel</td>
+            <td>585 586</td>
+            <td class="number">$0.00</td>
+            <td class="number">$35.23M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>00442-00</td>
+            <td>SCHINDLER Roberto Federico</td>
+            <td>1057 1058</td>
+            <td class="number">$0.00</td>
+            <td class="number">$37.38M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+        <tr>
+            <td>76001-00</td>
+            <td>MOLINA Jimena Melany</td>
+            <td></td>
+            <td class="number">$0.00</td>
+            <td class="number">$1.54M</td>
+            <td class="number">$0.00</td>
+            <td class="number total">$0.00</td>
+        </tr>
+        
+            </tbody>
+        </table>
+    </div>
+    
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Erogaciones</h2>
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('expenses', 'pie')">Por Rubro</button>
+                <button class="tab" onclick="showTab('expenses', 'bar')">Top 10</button>
+                <button class="tab" onclick="showTab('expenses', 'table')">Detalle</button>
+            </div>
+            <div id="expenses-pie" class="tab-content active">
+                <div style="height:550px; width:100%;">                            <div id="0fb79d3b-ad41-49be-b674-99e7a7d6bf75" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("0fb79d3b-ad41-49be-b674-99e7a7d6bf75")) {                    Plotly.newPlot(                        "0fb79d3b-ad41-49be-b674-99e7a7d6bf75",                        [{"hole":0.3,"hovertemplate":"\u003cb\u003e%{label}\u003c\u002fb\u003e\u003cbr\u003e%{value:$,.0f}\u003cbr\u003e%{percent}\u003cextra\u003e\u003c\u002fextra\u003e","labels":["Costo Salarial","Servicios","Actividades Sociales de Menores y D...","Servicio de Seguridad","Impuestos","Honorarios y Abonos Generales","Mantenimiento  de Espacios Comunes,...","Gastos de Administracion","Otros"],"textinfo":"percent","textposition":"inside","values":[345503162.62,162663358.44,131583594.7,112336254.68,82156637.22,48836283.44,48363113.04,23857008.11,64201782.36],"type":"pie"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":20,"r":20,"t":50,"b":20},"legend":{"font":{"size":10},"orientation":"v","yanchor":"middle","y":0.5,"xanchor":"left","x":1.02},"title":{"text":"Erogaciones por Rubro"},"height":550,"showlegend":true},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+            <div id="expenses-bar" class="tab-content">
+                <div style="height:400px; width:100%;">                            <div id="b0d9042e-5216-4faf-a3d1-6069b87671fc" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("b0d9042e-5216-4faf-a3d1-6069b87671fc")) {                    Plotly.newPlot(                        "b0d9042e-5216-4faf-a3d1-6069b87671fc",                        [{"marker":{"color":"#9b59b6"},"orientation":"h","text":["$19.77M","$22.29M","$23.86M","$48.36M","$48.84M","$82.16M","$112.34M","$131.58M","$162.66M","$345.50M"],"textposition":"outside","x":[19768812.0,22293474.14,23857008.11,48363113.04,48836283.44,82156637.22,112336254.68,131583594.7,162663358.44,345503162.62],"y":["Gastos de Personal","Gastos M\u00e9dicos","Gastos de Administracion","Mantenimiento  de Espacios Comunes, Sociales y Deportivos","Honorarios y Abonos Generales","Impuestos","Servicio de Seguridad","Actividades Sociales de Menores y Deportivas - Servicios e Insumos","Servicios","Costo Salarial"],"type":"bar"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"margin":{"l":350,"r":100,"t":50,"b":50},"title":{"text":"Top 10 Rubros de Erogaciones"},"xaxis":{"title":{"text":"Monto Total ($)"}},"yaxis":{"title":{"text":""}},"height":400},                        {"responsive": true}                    )                };            </script>        </div>
+            </div>
+            <div id="expenses-table" class="tab-content">
+                
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Rubro</th>
+                    <th>Descripción</th>
+                    <th>Empresa</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr>
+            <td>Costo Salarial</td>
+            <td>Salarios netos de abril</td>
+            <td>REMUNERACIONES A PAGAR 26</td>
+            <td class="number">$207.49M</td>
+        </tr>
+        
+        <tr>
+            <td>Costo Salarial</td>
+            <td>Cargas Sociales salarios - mar</td>
+            <td>ARCA CARGAS SOCIALES</td>
+            <td class="number">$106.28M</td>
+        </tr>
+        
+        <tr>
+            <td>Servicios</td>
+            <td>Energía Eléctrica - EDEN - Mes</td>
+            <td>EDEN - Empresa Distribuid</td>
+            <td class="number">$96.01M</td>
+        </tr>
+        
+        <tr>
+            <td>Servicio de Seguridad</td>
+            <td>Servicio de Seguridad - Watchm</td>
+            <td>SEGURIDAD WATCHMAN S.A.</td>
+            <td class="number">$53.85M</td>
+        </tr>
+        
+        <tr>
+            <td>Servicio de Seguridad</td>
+            <td>Servicio de Seguridad - Watchm</td>
+            <td>SEGURIDAD WATCHMAN S.A.</td>
+            <td class="number">$50.88M</td>
+        </tr>
+        
+        <tr>
+            <td>Servicios</td>
+            <td>Servicio de Aguas y Cloacas -C</td>
+            <td>COPESEL-COOPERATIVA DE SE</td>
+            <td class="number">$27.56M</td>
+        </tr>
+        
+        <tr>
+            <td>Actividades Sociales de Menores y Deport</td>
+            <td>Servicios de entretenimiento -</td>
+            <td>RG SPORT</td>
+            <td class="number">$25.62M</td>
+        </tr>
+        
+        <tr>
+            <td>Costo Salarial</td>
+            <td>Adelanto Vacaciones</td>
+            <td>REMUNERACIONES A PAGAR 26</td>
+            <td class="number">$23.86M</td>
+        </tr>
+        
+        <tr>
+            <td>Servicios</td>
+            <td>Servicio de Recolección de res</td>
+            <td>ECO-URAN SA</td>
+            <td class="number">$23.84M</td>
+        </tr>
+        
+        <tr>
+            <td>Actividades Sociales de Menores y Deport</td>
+            <td>Servicios Deportivos - (Fútbol</td>
+            <td>ZONA DEPORTIVA</td>
+            <td class="number">$22.14M</td>
+        </tr>
+        
+        <tr>
+            <td>Impuestos</td>
+            <td>ARCA - SIRE - Retencion IVA</td>
+            <td>ARCA SICORE/SIRE</td>
+            <td class="number">$16.93M</td>
+        </tr>
+        
+        <tr>
+            <td>Actividades Sociales de Menores y Deport</td>
+            <td>Alquiler canchas Fútbol  -  CA</td>
+            <td>STADIO S. A.</td>
+            <td class="number">$14.89M</td>
+        </tr>
+        
+        <tr>
+            <td>Actividades Sociales de Menores y Deport</td>
+            <td>Servicio de Coordinación y Ent</td>
+            <td>EFYDCOM S.A.</td>
+            <td class="number">$14.18M</td>
+        </tr>
+        
+        <tr>
+            <td>Honorarios y Abonos Generales</td>
+            <td>Abono mantenimiento Red Eléctr</td>
+            <td>BEPANOR ING.Y SERV. SA</td>
+            <td class="number">$13.72M</td>
+        </tr>
+        
+        <tr>
+            <td>Honorarios y Abonos Generales</td>
+            <td>Abono mantenimiento Red Eléctr</td>
+            <td>BEPANOR ING.Y SERV. SA</td>
+            <td class="number">$13.39M</td>
+        </tr>
+        
+        <tr>
+            <td>Impuestos</td>
+            <td>ARCA - SIRE - Retencion IVA</td>
+            <td>ARCA SICORE/SIRE</td>
+            <td class="number">$13.23M</td>
+        </tr>
+        
+        <tr>
+            <td>Gastos de Administracion</td>
+            <td>Fondo Fijo</td>
+            <td>FONDO FIJO CARDALES</td>
+            <td class="number">$7.98M</td>
+        </tr>
+        
+        <tr>
+            <td>Costo Salarial</td>
+            <td>Aporte sindical - UTEDYC</td>
+            <td>UTEDYC</td>
+            <td class="number">$7.88M</td>
+        </tr>
+        
+        <tr>
+            <td>Actividades Sociales de Menores y Deport</td>
+            <td>Servicios Deportivos - (Fútbol</td>
+            <td>ZONA DEPORTIVA</td>
+            <td class="number">$7.32M</td>
+        </tr>
+        
+        <tr>
+            <td>Servicios</td>
+            <td>Servicio de Recolección de res</td>
+            <td>ECO-URAN SA</td>
+            <td class="number">$6.89M</td>
+        </tr>
+        
+            </tbody>
+        </table>
+    </div>
+    
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Depósitos Bancarios No Identificados</h2>
+            
+    <div class="deposits-summary">
+        <strong>Total sin identificar: $8.23M</strong> (19 depósitos)
+    </div>
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Banco</th>
+                    <th>Fecha</th>
+                    <th>Descripción</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+        <tr>
+            <td>Banco Provincia</td>
+            <td>2025-02-24</td>
+            <td>BIP CR TR 22/02-C.000807361753 ORI:0014-03-713605388112...</td>
+            <td class="number">$539.2K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Provincia</td>
+            <td>2025-03-05</td>
+            <td>BIP CR TR 04/03-C.000584706705 ORI:0014-03-402508776598...</td>
+            <td class="number">$645.6K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Provincia</td>
+            <td>2025-03-07</td>
+            <td>CRED.TRF.07/03-C.122321744282 D:20144291515 N:JOORIS/MAURICI...</td>
+            <td class="number">$190.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Provincia</td>
+            <td>2026-02-18</td>
+            <td>CR.DEBIN 17/02-S.801591 C:27148172523...</td>
+            <td class="number">$1.47M</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-01-21</td>
+            <td>Deposito Cheque 48 Hs Otra Suc *s...</td>
+            <td class="number">$845.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-02-24</td>
+            <td>Pago A Proveedores Recibido  - Aurinegros Sa 30718187881 03 ...</td>
+            <td class="number">$688.1K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-02-27</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$9.5K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-02-28</td>
+            <td>Transferencia Ctas Mobile Banking  - De Ernesto Fabian Cabra...</td>
+            <td class="number">$500.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-03-06</td>
+            <td>Deposito Cheque 48 Hs Otra Suc *s...</td>
+            <td class="number">$845.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-03-19</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$300.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-06-25</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$28.1K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-07-17</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$270.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-07-07</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$1.22M</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-09-17</td>
+            <td>Transferencia Recibida  - De Noelia Brozzoni / - Var / 27338...</td>
+            <td class="number">$20.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-09-05</td>
+            <td>Transferencia Ctas Mobile Banking  - De Sabrina Noelia Paez ...</td>
+            <td class="number">$521.2K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2025-12-10</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$27.3K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2026-03-27</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$65.5K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2026-03-19</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$40.0K</td>
+        </tr>
+        
+        <tr>
+            <td>Banco Santander Rio</td>
+            <td>2026-03-19</td>
+            <td>Deposito De Efectivo En Sucursal  - Tarj Nro. 58924450720000...</td>
+            <td class="number">$2.0K</td>
+        </tr>
+        
+            </tbody>
+        </table>
+    </div>
+    
+        </div>
+    </div>
+    
+    <div class="footer">
+        Generado automáticamente | Datos actualizados al cierre del período
+    </div>
+    
+    <script>
+        function showTab(section, tab) {
+            const tabs = document.querySelectorAll(`#${section}-chart, #${section}-aging, #${section}-table, #${section}-pie, #${section}-bar`);
+            tabs.forEach(t => t && t.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll(`.section:has(#${section}-${tab}) .tab`);
+            buttons.forEach(b => b.classList.remove('active'));
+            
+            const content = document.getElementById(`${section}-${tab}`);
+            if (content) {
+                content.classList.add('active');
+                const allTabs = content.parentElement.querySelectorAll('.tab');
+                const allContents = content.parentElement.querySelectorAll('.tab-content');
+                allTabs.forEach(t => t.classList.remove('active'));
+                allContents.forEach(c => c.classList.remove('active'));
+                content.classList.add('active');
+                
+                const buttons = content.parentElement.querySelectorAll('.tab');
+                buttons.forEach((btn, i) => {
+                    const contents = content.parentElement.querySelectorAll('.tab-content');
+                    if (contents[i] === content) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
+    
